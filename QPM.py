@@ -12,6 +12,9 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import enum
 from qa_utils import *
+from colorama import init
+init() # colorama needed for Windows
+from colorama import Fore, Back, Style
 
 class QuestionType(enum.Enum):
     Unclassified = 1
@@ -30,6 +33,8 @@ class QPM(object):
         remove junk data.
     """
 
+    # Constants
+    Q_COLOR = Fore.CYAN
     def __init__(self, question, labeled_answer=""):
         """
         Class constructor.
@@ -42,18 +47,20 @@ class QPM(object):
             # Returns
                 A QPM instance.
         """
-        self.log("Question: {}".format(question))
+        self.log("{}QUESTION PRE-PROCESSING MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
+
+        self.log("Question: {}{}{}{}".format(QPM.Q_COLOR, Style.BRIGHT, question, Style.RESET_ALL))
         self._stop_words = None
         self._tknzr = TweetTokenizer()
         self._free_text = self.first_q(question)
-
-        self._query = self.get_sanitazed_sentence(self._free_text)
-        self.log("Stop-words removed: {}".format(self._query))
 
         self._labeled_answer = labeled_answer
         self._question_type = QuestionType.Unclassified
         self._pos_tagger = KGQAPOSTagger()
         self._collect_tags()
+
+        self._query = self.get_sanitazed_sentence(self._free_text)
+        self.log("Stop-words removed: {}{}{}{}".format(QPM.Q_COLOR, Style.BRIGHT, self._query, Style.RESET_ALL))
 
         self._entities = []
         self._important_query_terms = []
@@ -63,7 +70,6 @@ class QPM(object):
 
         self._classify_question()
         self._check_numerical_answer_expected()
-        self._collects_stats()
 
     def log(self, text):
         print("[{}] {}".format(QPM.__qualname__, text))
@@ -75,7 +81,7 @@ class QPM(object):
         if self._pos_tags:
             pos_str = ""
             for t in self._pos_tags:
-                pos_str = pos_str + "{}[{}] ".format(t[0], t[1])
+                pos_str = pos_str + "{}{}{}{}({}) ".format(QPM.Q_COLOR, Style.BRIGHT, t[0], Style.RESET_ALL, t[1])
             self.log("Parts of speech: {}".format(pos_str))
 
     def pos_tags(self):
@@ -163,32 +169,18 @@ class QPM(object):
         if cur_ner != "":
             self._entities.append((cur_ner, cur_ner_type))
 
+        if self._entities:
+            ner_str = ""
+            for t in self._entities:
+                ner_str = ner_str + "{}{}{}{}({}) ".format(QPM.Q_COLOR, Style.BRIGHT, t[0], Style.RESET_ALL, t[1])
+            self.log("Named entities: {}".format(ner_str))
+
         if num_verbs <= 1 and len(self._pos_tags) <= 6:
             self._question_type = QuestionType.SimpleFact
-            print("[QPM] Question type: Simple Fact")
+            self.log("Question type: Simple fact")
         else:
             self._question_type = QuestionType.ComplexFact
-            print("[QPM] Question type: Complex Fact")
-
-    def _collects_stats(self):
-        if self.question_type == QuestionType.SimpleFact and self._entities:
-            text = "["
-            for ne in self._entities:
-                text += str(ne)
-                text += ", "
-            text += "] "
-            text += self._free_text
-            print(text)
-        else:
-            if self._entities:
-                text = "["
-                for ne in self._entities:
-                    text += str(ne)
-                    text += ", "
-                text += "] "
-                text += self._free_text
-                print(text)
-
+            self.log("Question type: Complex fact")
 
     @property
     def question_type(self):

@@ -18,6 +18,8 @@ args = parser.parse_args()
 
 from QPM import QPM
 
+print("")
+
 if args.module.upper() == "QPM":
     qpm = QPM(args.question)
 else:
