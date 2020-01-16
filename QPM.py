@@ -261,6 +261,10 @@ class QPM(object):
                                              self._free_text.lower().startswith('how high') | \
                                              self._free_text.lower().startswith('which number') | \
                                              self._free_text.lower().startswith('how fast')
+        if self._is_numerical_answer_expected:
+            self.log("The question expects a numerical answer")
+        else:
+            self.log("The question does not expect a numerical answer")
 
     def is_numerical_answer_expected(self):
         """
