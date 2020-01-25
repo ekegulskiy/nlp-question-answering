@@ -8,7 +8,7 @@ This package can be used in 2 ways: using docker or directly using python3.
 
 ### Using Python3
 1. Ensure that you have python3 installed on your system.
-2. Install following python packages: word2number gitpython progressbar colorama
+2. Install following python packages: word2number gitpython progressbar colorama pattern
 3. Install nltk and download ntlk's stopwords and punkt data packages
 4. Get this git repository
 5. Run setup script: "python3 setup_env.py"

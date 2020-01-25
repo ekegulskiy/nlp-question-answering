@@ -7,14 +7,14 @@ FROM ubuntu:18.04
 RUN apt-get update
 
 # Python3, git, java (needed for nltk)
-RUN apt-get -y install python3 python3-pip git default-jdk
+RUN apt-get -y install python3 python3-pip git default-jdk libssl-dev libmysqlclient-dev
 
 # nltk
 RUN pip3 install --user -U nltk
 RUN python3 -m nltk.downloader stopwords punkt
 
 # other dependencies
-RUN pip3 install word2number gitpython progressbar colorama
+RUN pip3 install word2number gitpython progressbar colorama pattern
 
 # get latest nlp-question-answering sources
 WORKDIR /home
