@@ -20,9 +20,13 @@ This package can be used in 2 ways: using docker or directly using python3.
 4. Run docker container by running: "docker run -it nlp-question-answering"
 
 ## Usage
-The package allows users to run individual modules of sample Question Answering pipeline. 
+The package allows users to run individual parts of sample Question Answering pipeline. 
 The module to run is specified via the parameter, as well as the question to be processed.
 For example, to run QPM module, the following command can be used:
 ```
->python3.6 module_run.py --module=qpm --question="How tall is Mount McKinley?"
+>python3 module_run.py --module=qpm --question="How tall is Mount McKinley?"
+```
+For a list of available modules, run:
+```
+>python3 module_run.py --help
 ```

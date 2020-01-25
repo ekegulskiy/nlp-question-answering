@@ -17,10 +17,20 @@ args = parser.parse_args()
 #from test_utils import *
 
 from QPM import QPM
+from FMQFM import FMQFM
 
 print("")
 
 if args.module.upper() == "QPM":
+    # instantiate first module of the pipeline: QPM
     qpm = QPM(args.question)
+
+elif args.module.upper() == "FMQFM":
+    # instantiate 2 pipeline modules, QPM and QMQFM, and connect them together
+    qpm = QPM(args.question)
+    fmqfm = FMQFM(qpm)
+
+    # generate multiple search queries
+    fmqfm.multiquery()
 else:
     print("Unrecognized module")
