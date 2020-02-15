@@ -8,8 +8,6 @@ init() # colorama needed for Windows
 from colorama import Fore, Back, Style
 
 class GKGAPI(object):
-    # API: AIzaSyCbMTpFVwvAzdUXSl8R5qqdRk26JozGu_o
-
     def __init__(self, api_key, queries= None):
         self._key = api_key
         self._queries = queries
@@ -46,7 +44,7 @@ class GKGAPI(object):
 
     def getService(self):
         service = build("customsearch", "v1",
-                        developerKey="AIzaSyCbMTpFVwvAzdUXSl8R5qqdRk26JozGu_o")
+                        developerKey="xxx")
         return service
 
 
@@ -153,7 +151,7 @@ class GKGAPI(object):
 
     def contents(self, query):
         return urllib.request.urlopen(
-            "https://www.googleapis.com/customsearch/v1?key=AIzaSyCbMTpFVwvAzdUXSl8R5qqdRk26JozGu_o&cx=017576662512468239146:omuauf_lfve&q=Mount+McKinley").read()
+            "https://www.googleapis.com/customsearch/v1?key=xxx&cx=017576662512468239146:omuauf_lfve&q=Mount+McKinley").read()
 
 
 
