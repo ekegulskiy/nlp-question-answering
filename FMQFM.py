@@ -202,11 +202,6 @@ class FactoidQueryParser:
         self._parsed_query = self._parsed_query.replace("how big were", "size")
         self._parsed_query = self._parsed_query.replace("How big were", "size")
 
-        self.log("Transforming question terms into likely answer form: {}{}{}{}".format(self.Q_COLOR,
-                                                                                        Style.BRIGHT,
-                                                                                        self._parsed_query,
-                                                                                        Style.RESET_ALL))
-
     def _process_comas(self):
         """
             Replaces commas with spaces
@@ -599,6 +594,12 @@ class FactoidQueryParser:
         self._remove_begin_question_tokens()
         self._remove_stop_words()
         self._process_does_verb()
+
+        self.log("Transforming question terms into likely answer form: {}{}{}{}".format(self.Q_COLOR,
+                                                                                        Style.BRIGHT,
+                                                                                        " ".join(self._parsed_query_tokens),
+                                                                                        Style.RESET_ALL))
+
         self._build_pos_tags()
         self._process_past_tense()
 
@@ -703,17 +704,6 @@ class FMQFM(object):
         self._qpm = qpm
         self.Q_COLOR = Fore.CYAN
 
-    def log(self, text):
-        print("[{}] {}".format(FMQFM.__qualname__, text))
-
-    def original_question(self):
-        return self._original_q
-
-    def multiquery(self):
-        """
-
-        :return: list of search queries that are optimized to retreive an answer to the user question passed via QPM module
-        """
         FMQFM.fquery_parser.query = self.original_question()
         FMQFM.fquery_parser.qpm = self._qpm
         self._multiquery_list = FMQFM.fquery_parser.generate_search_queries()
@@ -725,4 +715,15 @@ class FMQFM(object):
                                                                     q[0],
                                                                     Style.RESET_ALL))
 
+    def log(self, text):
+        print("[{}] {}".format(FMQFM.__qualname__, text))
+
+    def original_question(self):
+        return self._original_q
+
+    def multiquery(self):
+        """
+
+        :return: list of search queries that are optimized to retreive an answer to the user question passed via QPM module
+        """
         return self._multiquery_list
