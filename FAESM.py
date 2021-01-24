@@ -21,6 +21,9 @@ import numpy as np
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from websocket import create_connection
+from colorama import init
+init() # colorama needed for Windows
+from colorama import Fore, Back, Style
 
 from qa_utils import *
 #from metrics.measure import *
@@ -55,6 +58,8 @@ class FAESM:
         Constructor
         :param dsoem - instance of DSOEM class
         """
+        self.log("{}MODULE 4: FACTOID ANSWER EXTRACTION SELECTION MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
+
         self._best_query = None
         self._top_objects = None
         self._oem = dsoem
@@ -85,6 +90,9 @@ class FAESM:
         self._generate_all_answer_paragraphs()
         self._process_with_bert()
 
+    def log(self, text):
+        print("[{}] {}".format(FAESM.__qualname__, text))
+
     def _process_with_bert(self):
         before = datetime.datetime.now()
         for bert_candidate in self._bert_candidates:
@@ -92,7 +100,7 @@ class FAESM:
         after = datetime.datetime.now()
         timespan = after - before
         duration = int(timespan.total_seconds() * 1000)
-        print("FAESM.[BERT] inference time: {} ms".format(duration))
+        #self.log("BERT inference time: {} ms".format(duration))
 
     def _generate_all_answer_paragraphs(self):
         data = self._oem.get_data_objects()
@@ -108,11 +116,10 @@ class FAESM:
             self._select_answer_paragraphs_from_kg(kg_data)
 
         if self._top_objects:
-            print("FAESM.[BERT Candidates List] Adding Search API Answer Paragraphs")
+            self.log("[BERT Candidates List] Adding Search API Answer Paragraphs")
             self._select_answer_paragraphs_from_global_search()
 
-        FAESM.answer_paragraphs_sizes.add_value(len(self._bert_candidates))
-        print("FAESM.[BERT Candidates List]: {}".format(len(self._bert_candidates)))
+        self.log("BERT Candidates List: {}".format(len(self._bert_candidates)))
 
     def _prepare_significant_query_terms(self):
         self._all_significant_queries_terms = set()
@@ -373,7 +380,6 @@ class FAESM:
             try:
                 numbers = w2n.word_to_num(text)
             except:
-                FAESM.no_expected_number_found += 1
                 return False  # no numbers found
         return True
 
@@ -383,7 +389,6 @@ class FAESM:
 
     def _candidate_answer_paragraph_score(self, candidate, query_rank, query_grams):
         if self._oem._qpm.is_numerical_answer_expected() and not FAESM._number_detector.has_number(candidate):
-            FAESM.no_expected_number_found += 1
             return 0  # no numbers found, the score is 0
 
         all_query_tokens = set(query_grams)
@@ -522,9 +527,10 @@ class FAESM:
             try:
                 self._ws = create_connection("ws://localhost:13254")
             except:
-                # print("bert-qa_srv connection not available")
+                self.log("bert-qa_srv connection not available")
                 return
 
+        self.log("Sending candidate to BERT: {}".format(context))
         self._ws.send(json_data)
         # print("Sent")
         # print("Receiving...")
@@ -570,14 +576,11 @@ class FAESM:
             object = object_tuple[0]
             try:
                 text = ""
-                if self._instance == "dkg":
-                    if hasattr(object, 'text') and object is not None:
-                        text = object.text()
-                    else:
-                        text = object
-                elif self._instance == "gkg":
-                    for tag in object:
-                        text += "\n" + tag["description"].lower()
+                if hasattr(object, 'text') and object is not None:
+                    text = object.text()
+                else:
+                    text = object
+
                 sents = self.split_into_sentences(text)
                 for sent in sents:
                     # if self.is_valid_sentence(sent):
@@ -694,6 +697,14 @@ class FAESM:
             elif not all_bert_contains_answer:
                 self._collect_all_bert_error_analysis()
 
+        self.log("Top answers:")
+
+        max_answers = 3
+        for answer in answers:
+            self.log("{}   {}{}".format(Style.BRIGHT, answer, Style.RESET_ALL))
+            max_answers -= 1
+            if max_answers == 0:
+                break
         return answers
 
     def split_into_sentences_add(self, text):

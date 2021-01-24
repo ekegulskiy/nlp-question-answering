@@ -53,5 +53,6 @@ elif args.module.upper() == "4":
     fmqfm = FMQFM(qpm)
     dsoem = DSOEM(fmqfm, args.ds, args.ds_api_key, qpm)
     faesm = FAESM(dsoem)
+    answers = faesm.top_answers()
 else:
     print("Unrecognized module")

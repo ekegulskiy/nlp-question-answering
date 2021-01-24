@@ -80,6 +80,7 @@ class GKGAPI(object):
 
         return self.boolean_search(query)
 
+
     def kg_search(self, named_entity):
         objs = []
 
@@ -91,8 +92,7 @@ class GKGAPI(object):
                 Style.RESET_ALL,
                 named_entity[1]))
 
-        object = self.object(named_entity[0], limit=10, entitiy_type=named_entity[1])
-        objs.append((object, self.get_object_score(object), self.get_object_tags_count(object)))
+        # TODO: implement KG search with Google API
         return objs
 
     def get_tag_score(self, tag):
