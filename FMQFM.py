@@ -697,7 +697,7 @@ class FMQFM(object):
         """
 
         print("")
-        self.log("{}FACTOID MULTI-QUERY FORMULATION MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
+        self.log("{}MODULE 2: FACTOID MULTI-QUERY FORMULATION MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
 
         self._original_q = qpm.free_text()
         self._multiquery_list = []

@@ -29,9 +29,10 @@ from data_source.sfsu_diffbot.diffbot_apis import DiffbotApi
 from data_source.sfsu_diffbot.image import Image
 from data_source.sfsu_diffbot.tag import Tag
 from data_source.sfsu_diffbot.video import Video
+from data_source.data_source_object import *
 
 
-class Object(object):
+class Object(DataSourceObject):
     """
     Object class representing an object from the content response and all its properties
     """
@@ -40,7 +41,7 @@ class Object(object):
         Constructor
         :param object: the object metadata
         """
-        self._object = object
+        super(Object, self).__init__(object)
         self._nextPage = 0
         self._encapsulate = encapsulate
         self._client = client
@@ -56,15 +57,6 @@ class Object(object):
             tags = self.tags_sorted_by_score()
             response = self._client.article(tags[0].uri())
             return self.title() + " " + self.text() + " " + response.objects()[0].text()
-
-    def object_value(self, field):
-        """
-
-        :param field:
-        :return: the value of the field
-        """
-        if field in self._object:
-            return self._object[field]
 
     def title(self):
         """

@@ -47,7 +47,7 @@ class QPM(object):
             # Returns
                 A QPM instance.
         """
-        self.log("{}QUESTION PRE-PROCESSING MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
+        self.log("{}MODULE 1: QUESTION PRE-PROCESSING MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
 
         self.log("Question: {}{}{}{}".format(QPM.Q_COLOR, Style.BRIGHT, question, Style.RESET_ALL))
         self._stop_words = None

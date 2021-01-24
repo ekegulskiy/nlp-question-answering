@@ -32,7 +32,7 @@ class DSOEM(object):
         :param qpm: QPM object
         """
         print("")
-        self.log("{}DATA SOURCE OBJECT EXTRACTION MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
+        self.log("{}MODULE 3: DATA SOURCE OBJECT EXTRACTION MODULE{}".format(Style.BRIGHT, Style.RESET_ALL))
 
         self._mqfm = mqfm
         self._qpm = qpm
@@ -170,7 +170,6 @@ class DSOEM(object):
             for o in encapsulated_objects:
                 if object.url().replace('https://', '').replace('http://', '') ==\
                    o[0].url().replace('https://', '').replace('http://', ''):
-                    DSOEM.kg_duplicate_objects_url += 1
                     return False
 
             return True
@@ -178,19 +177,15 @@ class DSOEM(object):
         encapsulated_objects = []
         multiqueries = self._multiqueries
 
-        if self._server == "dkg":
-            for index, query in enumerate(multiqueries):
-                if len(encapsulated_objects) >= self._max_num_objects:
-                    break  # limit to self._max_num_objects
-                obj_data = self._encapsulate_objects_mq_helper(query[0], with_tags)
+        for index, query in enumerate(multiqueries):
+            if len(encapsulated_objects) >= self._max_num_objects:
+                break  # limit to self._max_num_objects
+            obj_data = self._encapsulate_objects_mq_helper(query[0], with_tags)
 
-                for object in obj_data:
-                    if len(encapsulated_objects) < self._max_num_objects and self.is_valid_text(object) and\
-                            not_duplicate(object): # and self._contains_query_grams(object, query[0]):
-                        encapsulated_objects.append((object, query[2], query[0]))
-
-        elif self._server == "gkg":
-           encapsulated_objects = self.gkg_objects(multiqueries)
+            for object in obj_data:
+                if len(encapsulated_objects) < self._max_num_objects and self.is_valid_text(object) and\
+                        not_duplicate(object): # and self._contains_query_grams(object, query[0]):
+                    encapsulated_objects.append((object, query[2], query[0]))
 
         return self._best_query, encapsulated_objects
 
@@ -300,7 +295,6 @@ class DSOEM(object):
         :return: A list of encapsulated objects 
         """
         objects_list = []
-        print("DSOEM.[Diffbot Search API] searching for {}".format(query))
         main_response = self._client.simple_search(query)
         if main_response is None:
             return []

@@ -3,6 +3,8 @@ import urllib
 import urllib.parse
 import urllib.request
 from googleapiclient.discovery import build
+from data_source.google_kg_client.GKG_Content import *
+
 from colorama import init
 init() # colorama needed for Windows
 from colorama import Fore, Back, Style
@@ -48,8 +50,7 @@ class GKGAPI(object):
         return service
 
 
-
-    def object(self, query, limit=10, entitiy_type=None):
+    def boolean_search(self, query, limit=10, entitiy_type=None):
         tags = []
         self._service_url = 'https://kgsearch.googleapis.com/v1/entities:search'
         self._params = {'query': query, 'limit': limit, 'indent': True, 'key': self._key}
@@ -62,33 +63,22 @@ class GKGAPI(object):
         self._url = self._service_url + '?' + urllib.parse.urlencode(self._params)
         try:
             response = json.loads(urllib.request.urlopen(self._url).read())
-            for index, element in enumerate(response['itemListElement']):
-                if "detailedDescription" in element['result'] and element['result']['detailedDescription']['articleBody'] not in tags:
-                    tags.append({"description": element['result']['detailedDescription']['articleBody'],
-                                 "score": element['resultScore'], "name": element['result']['name']})
-                    self.log("   candidate {}: {}".format(index, element['result']['detailedDescription']['articleBody']))
-                elif "description" in element['result'] and element['result']["description"] not in tags:
-                    tags.append({"description": element['result']['description'], "score": element['resultScore'],
-                                 "name": element['result']['name']})
-                    self.log("   candidate {}: {}".format(index, element['result']['description']))
         except:
-            return tags
-        return tags
+            return GoogleKGContent(response)
+        return GoogleKGContent(response)
 
     def log(self, text):
         print("[{}] {}".format("DSOEM", text))
 
-    def objects(self):
-        objs = []
-        for query in self._queries:
-            self.log("Using Google KG Search API (https://kgsearch.googleapis.com/v1/entities:search) for boolean query {}{}{}{}".format(self.Q_COLOR,
-                                                             Style.BRIGHT,
-                                                             query,
-                                                             Style.RESET_ALL))
+    def simple_search(self, query):
+        self.log(
+            "Using Google KG Search API (https://kgsearch.googleapis.com/v1/entities:search) for boolean query {}{}{}{}".format(
+                self.Q_COLOR,
+                Style.BRIGHT,
+                query,
+                Style.RESET_ALL))
 
-            object = self.object(query)
-            objs.append((object, self.get_object_score(object), self.get_object_tags_count(object)))
-        return objs
+        return self.boolean_search(query)
 
     def kg_search(self, named_entity):
         objs = []
