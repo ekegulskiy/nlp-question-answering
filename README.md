@@ -74,6 +74,11 @@ For example, to run 1st module of the pipeline, the following command can be use
 ```
 >python3 module_run.py --module=1 --question="How tall is Mount McKinley?"
 ```
+NOTE: running module 3 (DSOEM) requires an API key for the respective KG used. See instructions on how to get the
+API key for each KG here:
+- Google KG - see https://developers.google.com/knowledge-graph/prereqs
+- Diffbot KG - see https://www.diffbot.com/dev/docs/
+
 For a list of available arguments, run:
 ```
 >python3 module_run.py --help
